@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中山劍潭｜一日精準行程 </title>
+    <title>中山劍潭｜一日精準行程  </title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,6 +21,7 @@
                     boxShadow: {
                         'soft': '0 10px 40px -10px rgba(244, 63, 94, 0.2)',
                         'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.6)',
+                        'upwards': '0 -4px 20px rgba(0,0,0,0.05)',
                     }
                 }
             }
@@ -87,6 +88,14 @@
             border-color: #fff;
         }
 
+        /* Nav Glass */
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
         /* Animation */
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
@@ -109,11 +118,17 @@
         /* Back to top */
         #back-to-top { opacity: 0; visibility: hidden; transition: all 0.5s ease; }
         #back-to-top.show { opacity: 1; visibility: visible; }
+        
+        /* Nav Links */
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 1px; bottom: -2px; left: 0;
+            background-color: #fb7185; transition: width 0.3s;
+        }
+        .nav-link:hover::after { width: 100%; }
     </style>
 </head>
-<body class="pb-24">
-
-    <div class="romantic-bg"></div>
+<body class="pb-32 md:pb-24"> <div class="romantic-bg"></div>
 
     <nav class="bg-white/70 backdrop-blur-md sticky top-0 z-50 border-b border-white/40">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
@@ -125,6 +140,14 @@
                         <p class="text-[10px] text-rose-400 font-sans tracking-widest uppercase">Romantic Edition</p>
                     </div>
                 </div>
+
+                <div class="hidden md:flex items-center gap-8 mr-6">
+                    <a href="#prep" class="text-stone-600 hover:text-rose-500 font-serif text-sm nav-link transition">準備</a>
+                    <a href="#timeline" class="text-stone-600 hover:text-rose-500 font-serif text-sm nav-link transition">行程</a>
+                    <a href="#food" class="text-stone-600 hover:text-rose-500 font-serif text-sm nav-link transition">地圖</a>
+                    <a href="#extras" class="text-stone-600 hover:text-rose-500 font-serif text-sm nav-link transition">備案</a>
+                </div>
+
                 <div class="flex items-center gap-3">
                     <button id="weather-btn" onclick="toggleWeather()" class="flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-stone-600 border border-stone-200 shadow-sm hover:shadow-md hover:text-rose-500 transition">
                         <span>☀️ 晴天模式</span>
@@ -137,7 +160,7 @@
         </div>
     </nav>
 
-    <section id="prep" class="py-10 max-w-5xl mx-auto px-4">
+    <section id="prep" class="py-10 max-w-5xl mx-auto px-4 scroll-mt-24">
         <div class="glass-card rounded-[2rem] p-8 reveal active">
             <h2 class="text-2xl font-bold text-stone-800 mb-6 flex items-center gap-3 border-b border-stone-100 pb-4">
                 <span class="text-rose-400 text-3xl">✦</span> 出發前準備
@@ -170,7 +193,7 @@
         </div>
     </section>
 
-    <section id="timeline" class="py-6 max-w-5xl mx-auto px-4">
+    <section id="timeline" class="py-6 max-w-5xl mx-auto px-4 scroll-mt-24">
         <div class="flex items-center justify-between mb-12 px-4 reveal">
             <h2 class="text-3xl font-bold text-stone-800 italic">Today's Journey</h2>
             <div class="text-xs font-bold text-rose-500 bg-white border border-rose-100 px-4 py-1.5 rounded-full shadow-sm font-sans">
@@ -182,7 +205,7 @@
             </div>
     </section>
 
-    <section id="food" class="py-16 bg-white/40 backdrop-blur-sm border-t border-white/60">
+    <section id="food" class="py-16 bg-white/40 backdrop-blur-sm border-t border-white/60 scroll-mt-20">
         <div class="max-w-6xl mx-auto px-6">
             <h2 class="text-2xl font-bold text-stone-800 mb-10 text-center italic">Discover & Navigate</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="food-grid">
@@ -190,7 +213,7 @@
         </div>
     </section>
 
-    <section id="extras" class="py-16 border-t border-white/60 bg-gradient-to-b from-transparent to-white/30">
+    <section id="extras" class="py-16 border-t border-white/60 bg-gradient-to-b from-transparent to-white/30 scroll-mt-20">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-12 reveal">
                 <span class="text-xs font-bold text-rose-400 tracking-[0.2em] uppercase font-sans">Pocket List</span>
@@ -228,12 +251,33 @@
         </div>
     </section>
 
-    <footer class="text-stone-400 py-12 text-center">
-        <p class="text-[10px] font-sans tracking-widest uppercase mb-1">Trip Planner v15.0</p>
+    <div class="md:hidden fixed bottom-0 left-0 w-full nav-glass z-50 shadow-upwards pb-safe">
+        <div class="flex justify-around items-center py-3">
+            <a href="#prep" class="flex flex-col items-center gap-1 text-stone-400 hover:text-rose-500 transition">
+                <span class="text-lg">🎒</span>
+                <span class="text-[10px] font-bold">準備</span>
+            </a>
+            <a href="#timeline" class="flex flex-col items-center gap-1 text-stone-400 hover:text-rose-500 transition">
+                <span class="text-lg">📅</span>
+                <span class="text-[10px] font-bold">行程</span>
+            </a>
+            <a href="#food" class="flex flex-col items-center gap-1 text-stone-400 hover:text-rose-500 transition">
+                <span class="text-lg">🗺️</span>
+                <span class="text-[10px] font-bold">地圖</span>
+            </a>
+            <a href="#extras" class="flex flex-col items-center gap-1 text-stone-400 hover:text-rose-500 transition">
+                <span class="text-lg">✨</span>
+                <span class="text-[10px] font-bold">備案</span>
+            </a>
+        </div>
+    </div>
+
+    <footer class="text-stone-400 py-12 text-center pb-24 md:pb-12">
+        <p class="text-[10px] font-sans tracking-widest uppercase mb-1">Trip Planner v15.1</p>
         <p class="text-[10px] font-serif italic text-stone-300">Have a lovely day</p>
     </footer>
 
-    <button id="back-to-top" onclick="window.scrollTo(0,0)" class="fixed bottom-8 right-8 bg-white text-rose-400 p-4 rounded-full shadow-soft hover:shadow-lg hover:-translate-y-1 transition z-50 border border-rose-100">
+    <button id="back-to-top" onclick="window.scrollTo(0,0)" class="fixed bottom-24 right-6 md:bottom-8 md:right-8 bg-white text-rose-400 p-3 md:p-4 rounded-full shadow-soft hover:shadow-lg hover:-translate-y-1 transition z-40 border border-rose-100">
         ↑
     </button>
 
