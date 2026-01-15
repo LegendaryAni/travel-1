@@ -3,85 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中山劍潭｜一日精準行程 (UI美化版)</title>
+    <title>中山劍潭｜一日精準行程 </title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    colors: {
+                        roseGold: '#eec1be',
+                        warmWhite: '#fafaf9',
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(244, 63, 94, 0.2)',
+                        'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.6)',
+                    }
+                }
+            }
+        }
+    </script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #fff1f2;
-            color: #334155;
-            background-image: linear-gradient(to bottom, #fff1f2 0%, #fff7ed 100%);
+            color: #57534e;
+            overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* Timeline Style */
+        /* Romantic Background */
+        .romantic-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -10;
+            background: linear-gradient(135deg, #fff1f2 0%, #fff7ed 100%);
+        }
+        .romantic-bg::before {
+            content: ''; position: absolute; top: -10%; right: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(254, 205, 211, 0.4) 0%, transparent 60%);
+            filter: blur(60px); animation: float 10s infinite ease-in-out;
+        }
+        .romantic-bg::after {
+            content: ''; position: absolute; bottom: -10%; left: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(253, 186, 116, 0.3) 0%, transparent 60%);
+            filter: blur(60px); animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+
+        /* Timeline Line */
         .timeline-line {
-            position: absolute;
-            left: 28px;
-            top: 24px;
-            bottom: 24px;
-            width: 3px;
-            background: #cbd5e1;
-            z-index: 0;
-            border-radius: 99px;
+            position: absolute; left: 28px; top: 24px; bottom: 24px; width: 2px;
+            background: linear-gradient(to bottom, #fda4af, #fdba74);
+            z-index: 0; border-radius: 99px; opacity: 0.6;
         }
-
         @media (min-width: 768px) {
-            .timeline-line {
-                left: 50%;
-                transform: translateX(-50%);
-            }
+            .timeline-line { left: 50%; transform: translateX(-50%); }
         }
 
-        /* Interactions */
-        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.15); border-color: #fda4af; }
-
-        /* Tags */
-        .tag-base { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; }
-        .tag-hard { background-color: #be123c; color: white; }
-        .tag-rec { background-color: #0ea5e9; color: white; }
-        .tag-rain { background-color: #64748b; color: white; }
+        /* Frosted Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.85);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(244, 63, 94, 0.15);
+            border-color: #fff;
+        }
 
         /* Animation */
-        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Back to Top */
-        #back-to-top { opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        /* Typography */
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        /* Checklist */
+        .checklist-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.95rem; color: #78716c; cursor: pointer; transition: color 0.2s; }
+        .checklist-item:hover { color: #be123c; }
+        .checklist-item input { 
+            appearance: none; width: 1.1rem; height: 1.1rem; border-radius: 50%; border: 1.5px solid #d6d3d1; background: #fff; cursor: pointer; position: relative; transition: all 0.2s;
+        }
+        .checklist-item input:checked { background: #fda4af; border-color: #fda4af; }
+        .checklist-item input:checked::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: white; border-radius: 50%; }
+
+        /* Tags */
+        .tag-base { font-size: 0.7rem; letter-spacing: 0.05em; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+        
+        /* Back to top */
+        #back-to-top { opacity: 0; visibility: hidden; transition: all 0.5s ease; }
         #back-to-top.show { opacity: 1; visibility: visible; }
-
-        /* Checklist Styles */
-        .checklist-group h3 { color: #881337; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .checklist-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; font-size: 0.9rem; color: #475569; cursor: pointer; }
-        .checklist-item input { accent-color: #f43f5e; width: 1rem; height: 1rem; }
-
-        /* Extra List Styling (Pocket List) */
-        .pocket-card { background: white; border-radius: 12px; padding: 12px; transition: all 0.2s; border: 1px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .pocket-card:hover { transform: scale(1.02); border-color: currentColor; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
     </style>
 </head>
-<body class="antialiased selection:bg-rose-200 selection:text-rose-900 pb-20">
+<body class="pb-24">
 
-    <nav class="bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-rose-100 shadow-sm">
+    <div class="romantic-bg"></div>
+
+    <nav class="bg-white/70 backdrop-blur-md sticky top-0 z-50 border-b border-white/40">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center h-14">
-                <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <div class="w-8 h-8 bg-rose-500 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 bg-gradient-to-br from-rose-300 to-rose-400 rounded-full flex items-center justify-center text-white font-serif italic text-xl shadow-soft group-hover:scale-105 transition">P</div>
                     <div>
-                        <h1 class="font-bold text-base text-slate-800 leading-none">中山劍潭精準行程</h1>
-                        <p class="text-[10px] text-slate-500 font-mono mt-0.5">VER 14.0 (UI Upgrade)</p>
+                        <h1 class="font-bold text-lg text-stone-800 tracking-wide">中山劍潭精準行程</h1>
+                        <p class="text-[10px] text-rose-400 font-sans tracking-widest uppercase">Romantic Edition</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button id="weather-btn" onclick="toggleWeather()" class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 transition border border-amber-200">
+                <div class="flex items-center gap-3">
+                    <button id="weather-btn" onclick="toggleWeather()" class="flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-stone-600 border border-stone-200 shadow-sm hover:shadow-md hover:text-rose-500 transition">
                         <span>☀️ 晴天模式</span>
                     </button>
-                    <button onclick="copyItinerary()" class="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition border border-slate-200">
+                    <button onclick="copyItinerary()" class="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-stone-800 text-stone-100 hover:bg-stone-700 transition shadow-lg shadow-stone-200">
                         <span>📋 複製</span>
                     </button>
                 </div>
@@ -89,109 +137,110 @@
         </div>
     </nav>
 
-    <section id="prep" class="py-6 max-w-5xl mx-auto px-4">
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 reveal active">
-            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
-                <span class="text-rose-500">🎒</span> 出發前檢查清單
+    <section id="prep" class="py-10 max-w-5xl mx-auto px-4">
+        <div class="glass-card rounded-[2rem] p-8 reveal active">
+            <h2 class="text-2xl font-bold text-stone-800 mb-6 flex items-center gap-3 border-b border-stone-100 pb-4">
+                <span class="text-rose-400 text-3xl">✦</span> 出發前準備
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
-                <div class="checklist-group bg-rose-50 p-4 rounded-xl border border-rose-100">
-                    <h3>🔴 絕對必備</h3>
-                    <label class="checklist-item"><input type="checkbox"> 現金 (百元鈔/拉麵店用)</label>
+                <div class="bg-rose-50/50 p-5 rounded-2xl border border-rose-100">
+                    <h3 class="text-rose-800 text-xs font-bold tracking-widest uppercase mb-3 font-sans">Essentials</h3>
+                    <label class="checklist-item"><input type="checkbox"> 現金 (百元鈔)</label>
                     <label class="checklist-item"><input type="checkbox"> 襪子 (貓咖規定)</label>
-                    <label class="checklist-item"><input type="checkbox"> 悠遊卡 (且有錢)</label>
-                    <label class="checklist-item"><input type="checkbox"> 行動電源 + 線</label>
+                    <label class="checklist-item"><input type="checkbox"> 悠遊卡</label>
+                    <label class="checklist-item"><input type="checkbox"> 行動電源</label>
                 </div>
 
-                <div class="checklist-group bg-sky-50 p-4 rounded-xl border border-sky-100">
-                    <h3>🔵 戶外機能</h3>
-                    <label class="checklist-item"><input type="checkbox"> 防滑好走的鞋</label>
-                    <label class="checklist-item"><input type="checkbox"> 摺疊傘 (雨備)</label>
-                    <label class="checklist-item"><input type="checkbox"> 薄外套 (山頂風大)</label>
+                <div class="bg-orange-50/50 p-5 rounded-2xl border border-orange-100">
+                    <h3 class="text-orange-800 text-xs font-bold tracking-widest uppercase mb-3 font-sans">Outdoor</h3>
+                    <label class="checklist-item"><input type="checkbox"> 好走的鞋</label>
+                    <label class="checklist-item"><input type="checkbox"> 摺疊傘</label>
+                    <label class="checklist-item"><input type="checkbox"> 薄外套</label>
                 </div>
 
-                <div class="checklist-group bg-amber-50 p-4 rounded-xl border border-amber-100">
-                    <h3>🟡 貼心加分</h3>
-                    <label class="checklist-item"><input type="checkbox"> 濕紙巾 (流汗用)</label>
-                    <label class="checklist-item"><input type="checkbox"> 面紙</label>
-                    <label class="checklist-item"><input type="checkbox"> 水 (出發前買好)</label>
+                <div class="bg-stone-50/50 p-5 rounded-2xl border border-stone-100">
+                    <h3 class="text-stone-600 text-xs font-bold tracking-widest uppercase mb-3 font-sans">Care</h3>
+                    <label class="checklist-item"><input type="checkbox"> 濕紙巾/面紙</label>
+                    <label class="checklist-item"><input type="checkbox"> 水</label>
+                    <label class="checklist-item"><input type="checkbox"> 補妝用品</label>
                 </div>
 
             </div>
         </div>
     </section>
 
-    <section id="timeline" class="py-4 max-w-5xl mx-auto px-4">
-        <div class="flex items-center justify-between mb-8 px-2 reveal">
-            <h2 class="text-2xl font-bold text-slate-800">今日流程</h2>
-            <div class="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
-                日落 S = 17:28
+    <section id="timeline" class="py-6 max-w-5xl mx-auto px-4">
+        <div class="flex items-center justify-between mb-12 px-4 reveal">
+            <h2 class="text-3xl font-bold text-stone-800 italic">Today's Journey</h2>
+            <div class="text-xs font-bold text-rose-500 bg-white border border-rose-100 px-4 py-1.5 rounded-full shadow-sm font-sans">
+                Sunset at 17:28
             </div>
         </div>
-        <div class="timeline-container relative pb-8" id="timeline-content">
+        <div class="timeline-container relative pb-10" id="timeline-content">
             <div class="timeline-line"></div>
             </div>
     </section>
 
-    <section id="food" class="py-12 bg-white border-t border-rose-50">
+    <section id="food" class="py-16 bg-white/40 backdrop-blur-sm border-t border-white/60">
         <div class="max-w-6xl mx-auto px-6">
-            <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">全地圖導航</h2>
+            <h2 class="text-2xl font-bold text-stone-800 mb-10 text-center italic">Discover & Navigate</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="food-grid">
                 </div>
         </div>
     </section>
 
-    <section id="extras" class="py-12 bg-slate-50 border-t border-slate-200">
+    <section id="extras" class="py-16 border-t border-white/60 bg-gradient-to-b from-transparent to-white/30">
         <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-10 reveal">
-                <span class="text-xs font-bold text-slate-400 tracking-widest uppercase">POCKET LIST</span>
-                <h2 class="text-2xl font-bold text-slate-800 mt-1">空檔備案區</h2>
-                <p class="text-sm text-slate-500 mt-2">提早結束或需要吹冷氣時使用，點擊可直接導航</p>
+            <div class="text-center mb-12 reveal">
+                <span class="text-xs font-bold text-rose-400 tracking-[0.2em] uppercase font-sans">Pocket List</span>
+                <h2 class="text-3xl font-bold text-stone-800 mt-3 italic">備案選擇</h2>
+                <p class="text-sm text-stone-500 mt-3 font-sans font-light">優雅應對行程變化</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
-                <div class="bg-gradient-to-br from-rose-50 to-pink-100 rounded-2xl p-6 shadow-sm border border-rose-200 reveal relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 text-9xl text-rose-200 opacity-20 select-none">🛍️</div>
-                    <h3 class="text-lg font-bold text-rose-600 mb-4 flex items-center gap-2 relative z-10">
-                        <span class="bg-white p-1 rounded-md shadow-sm">🚇</span> 中山站
+                <div class="glass-card rounded-2xl p-6 reveal relative overflow-hidden group">
+                    <div class="absolute -right-2 -top-2 text-8xl text-rose-100 opacity-50 group-hover:scale-110 transition duration-700 select-none font-serif">Z</div>
+                    <h3 class="text-xl font-bold text-rose-900 mb-4 flex items-center gap-3 relative z-10">
+                        <span class="text-rose-400">❖</span> 中山站
                     </h3>
-                    <div class="space-y-3 relative z-10" id="extra-zhongshan"></div>
+                    <div class="space-y-4 relative z-10" id="extra-zhongshan"></div>
                 </div>
 
-                <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-2xl p-6 shadow-sm border border-orange-200 reveal relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 text-9xl text-orange-200 opacity-20 select-none">🎨</div>
-                    <h3 class="text-lg font-bold text-orange-600 mb-4 flex items-center gap-2 relative z-10">
-                        <span class="bg-white p-1 rounded-md shadow-sm">🎡</span> 圓山站
+                <div class="glass-card rounded-2xl p-6 reveal relative overflow-hidden group">
+                    <div class="absolute -right-2 -top-2 text-8xl text-orange-100 opacity-50 group-hover:scale-110 transition duration-700 select-none font-serif">Y</div>
+                    <h3 class="text-xl font-bold text-orange-900 mb-4 flex items-center gap-3 relative z-10">
+                        <span class="text-orange-400">❖</span> 圓山站
                     </h3>
-                    <div class="space-y-3 relative z-10" id="extra-yuanshan"></div>
+                    <div class="space-y-4 relative z-10" id="extra-yuanshan"></div>
                 </div>
 
-                <div class="bg-gradient-to-br from-slate-50 to-indigo-100 rounded-2xl p-6 shadow-sm border border-indigo-200 reveal relative overflow-hidden">
-                     <div class="absolute -right-4 -top-4 text-9xl text-indigo-200 opacity-20 select-none">🎭</div>
-                    <h3 class="text-lg font-bold text-indigo-600 mb-4 flex items-center gap-2 relative z-10">
-                        <span class="bg-white p-1 rounded-md shadow-sm">🌃</span> 劍潭/士林
+                <div class="glass-card rounded-2xl p-6 reveal relative overflow-hidden group">
+                    <div class="absolute -right-2 -top-2 text-8xl text-indigo-100 opacity-50 group-hover:scale-110 transition duration-700 select-none font-serif">J</div>
+                    <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-3 relative z-10">
+                        <span class="text-indigo-400">❖</span> 劍潭/士林
                     </h3>
-                    <div class="space-y-3 relative z-10" id="extra-jiantan"></div>
+                    <div class="space-y-4 relative z-10" id="extra-jiantan"></div>
                 </div>
 
             </div>
         </div>
     </section>
 
-    <footer class="bg-slate-800 text-slate-400 py-12 text-center">
-        <p class="text-xs font-bold tracking-widest uppercase mb-1">Trip Planner v14.0</p>
-        <p class="text-[10px] text-slate-600">Final Release with UI Enhancements</p>
+    <footer class="text-stone-400 py-12 text-center">
+        <p class="text-[10px] font-sans tracking-widest uppercase mb-1">Trip Planner v15.0</p>
+        <p class="text-[10px] font-serif italic text-stone-300">Have a lovely day</p>
     </footer>
 
-    <button id="back-to-top" onclick="window.scrollTo(0,0)" class="fixed bottom-6 right-6 bg-rose-500 text-white p-3 rounded-full shadow-lg hover:bg-rose-600 transition z-50">↑</button>
+    <button id="back-to-top" onclick="window.scrollTo(0,0)" class="fixed bottom-8 right-8 bg-white text-rose-400 p-4 rounded-full shadow-soft hover:shadow-lg hover:-translate-y-1 transition z-50 border border-rose-100">
+        ↑
+    </button>
 
     <script>
         let isRainMode = false;
 
-        // --- Data Definitions ---
-
+        // --- Data ---
         const itineraryData = [
             { start: "11:00", end: "11:10", title: "集合 & 整備", loc: "中山南西", type: "prep", action: "進百貨洗手間整理儀容、買水。", rule: "下午只做小補，勿空等。", link: "中山南西+百貨" },
             { start: "11:10", end: "11:15", title: "前往平成十九", loc: "移動", type: "move", action: "直奔店門口排隊。", rule: "🔥 提早5分鐘，保證第一輪。", link: "平成十九" },
@@ -217,12 +266,12 @@
         ];
 
         const spotsData = [
-            { title: "誠品 R79", tag: "逛街", time: "12:20", desc: "地下書街，冷氣開放。", link: "誠品R79", bg: "bg-sky-50" },
-            { title: "光點台北", tag: "逛街", time: "12:20", desc: "白色洋房，庭園好拍。", link: "光點台北", bg: "bg-sky-50" },
-            { title: "平成十九", tag: "午餐", time: "11:15", desc: "提早5分鐘避排隊。", link: "平成十九", bg: "bg-orange-50" },
-            { title: "紅玥貓藝廊", tag: "貓咖", time: "13:30", desc: "硬時點，準時入場。", link: "紅玥緬因貓藝廊", bg: "bg-rose-50" },
-            { title: "冰山五角", tag: "甜點", time: "15:30", desc: "提早吃，填補空檔。", link: "冰山五角", bg: "bg-pink-50" },
-            { title: "森林方舟", tag: "夕陽", time: "17:00", desc: "提早到，抓黃金光線。", link: "森林方舟", bg: "bg-indigo-50" }
+            { title: "誠品 R79", tag: "逛街", time: "12:20", desc: "地下書街，冷氣開放。", link: "誠品R79", bg: "hover:border-rose-200" },
+            { title: "光點台北", tag: "逛街", time: "12:20", desc: "白色洋房，庭園好拍。", link: "光點台北", bg: "hover:border-rose-200" },
+            { title: "平成十九", tag: "午餐", time: "11:15", desc: "提早5分鐘避排隊。", link: "平成十九", bg: "hover:border-orange-200" },
+            { title: "紅玥貓藝廊", tag: "貓咖", time: "13:30", desc: "硬時點，準時入場。", link: "紅玥緬因貓藝廊", bg: "hover:border-rose-300" },
+            { title: "冰山五角", tag: "甜點", time: "15:30", desc: "提早吃，填補空檔。", link: "冰山五角", bg: "hover:border-pink-300" },
+            { title: "森林方舟", tag: "夕陽", time: "17:00", desc: "提早到，抓黃金光線。", link: "森林方舟", bg: "hover:border-orange-300" }
         ];
 
         const extrasData = {
@@ -245,7 +294,6 @@
         };
 
         // --- Functions ---
-
         function getMapLink(query) {
              return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
         }
@@ -256,25 +304,25 @@
             
             if (isRainMode) {
                 btn.innerHTML = '<span>🌧️ 雨天模式</span>';
-                btn.className = "flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-600 text-white hover:bg-slate-700 transition border border-slate-600";
+                btn.className = "flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-slate-600 text-white shadow-sm hover:bg-slate-700 transition";
             } else {
                 btn.innerHTML = '<span>☀️ 晴天模式</span>';
-                btn.className = "flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 transition border border-amber-200";
+                btn.className = "flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-stone-600 border border-stone-200 shadow-sm hover:shadow-md hover:text-rose-500 transition";
             }
             renderTimeline();
         }
 
         function copyItinerary() {
-            let text = "📅 中山劍潭一日遊 (精準版)\n\n";
+            let text = "📅 中山劍潭一日遊 (Romantic)\n\n";
             itineraryData.forEach(item => {
                 if (item.mode === 'rain' && !isRainMode) return;
                 if (item.mode === 'sunny' && isRainMode) return;
                 text += `${item.start} ${item.title}\n📍 ${item.loc} | 💡 ${item.action}\n\n`;
             });
-            text += "Trip Planner v14.0";
+            text += "Trip Planner v15.0";
             
             navigator.clipboard.writeText(text).then(() => {
-                alert("✅ 行程已複製！請直接貼上 Line 或筆記本。");
+                alert("✨ 行程已複製到剪貼簿");
             });
         }
 
@@ -286,49 +334,52 @@
                 if (item.mode === 'rain' && !isRainMode) return;
                 if (item.mode === 'sunny' && isRainMode) return;
 
-                let s = { icon: '📍', color: 'border-slate-300' };
-                if (item.type === 'food') s = { icon: '🥢', color: 'border-orange-400' };
-                if (item.type === 'prep') s = { icon: '🎒', color: 'border-pink-300' };
-                if (item.type === 'hard') s = { icon: '⭐', color: 'border-rose-500' };
-                if (item.type === 'relax') s = { icon: '☕', color: 'border-sky-400' };
+                let s = { icon: '📍', color: 'border-stone-300', bg: 'bg-white' };
+                if (item.type === 'food') s = { icon: '🥢', color: 'border-orange-200', bg: 'bg-orange-50/30' };
+                if (item.type === 'prep') s = { icon: '🎒', color: 'border-rose-200', bg: 'bg-rose-50/30' };
+                if (item.type === 'hard') s = { icon: '★', color: 'border-rose-400', bg: 'bg-rose-50/50' };
+                if (item.type === 'relax') s = { icon: '☕', color: 'border-sky-200', bg: 'bg-sky-50/30' };
                 
                 let tagHTML = '';
-                if(item.type === 'hard') tagHTML = '<span class="tag-base tag-hard ml-2">不可動</span>';
-                if(item.type === 'relax') tagHTML = '<span class="tag-base tag-rec ml-2">推薦</span>';
-                if(item.mode === 'rain') tagHTML = '<span class="tag-base tag-rain ml-2">雨備</span>';
+                if(item.type === 'hard') tagHTML = '<span class="tag-base bg-rose-100 text-rose-600 ml-2">不可動</span>';
+                if(item.type === 'relax') tagHTML = '<span class="tag-base bg-sky-100 text-sky-600 ml-2">推薦</span>';
+                if(item.mode === 'rain') tagHTML = '<span class="tag-base bg-slate-100 text-slate-500 ml-2">雨備</span>';
 
                 let recHTML = '';
                 if(item.recs) {
-                    recHTML = `<div class="mt-3 flex flex-wrap gap-2">
-                        ${item.recs.map(r => `<a href="${getMapLink(r.link)}" target="_blank" class="rec-btn">📍 ${r.name}</a>`).join('')}
+                    recHTML = `<div class="mt-4 flex flex-wrap gap-2">
+                        ${item.recs.map(r => `<a href="${getMapLink(r.link)}" target="_blank" class="px-3 py-1 rounded-full text-[11px] font-bold bg-white text-stone-500 border border-stone-200 hover:border-rose-300 hover:text-rose-500 transition shadow-sm">📍 ${r.name}</a>`).join('')}
                     </div>`;
                 }
 
-                const extraClass = item.special === 'sunset' ? 'bg-gradient-to-r from-orange-50 to-rose-50 border-l-orange-400' : 'bg-white';
+                const extraClass = item.special === 'sunset' ? 'border-l-4 border-l-rose-400 bg-gradient-to-r from-rose-50/80 to-transparent' : '';
                 const isLeft = index % 2 === 0;
                 const rowClass = isLeft ? 'md:flex-row-reverse' : 'md:flex-row';
                 const alignClass = isLeft ? 'md:text-right' : 'md:text-left';
 
                 const html = `
-                <div class="relative flex items-stretch justify-between md:justify-center mb-8 w-full group reveal">
-                    <div class="absolute left-[28px] md:left-1/2 w-10 h-10 rounded-full bg-white border-[3px] ${s.color} z-10 transform -translate-x-1/2 flex items-center justify-center text-lg shadow-sm">
+                <div class="relative flex items-stretch justify-between md:justify-center mb-10 w-full group reveal">
+                    <div class="absolute left-[28px] md:left-1/2 w-9 h-9 rounded-full bg-white border-2 ${s.color} z-10 transform -translate-x-1/2 flex items-center justify-center text-sm shadow-sm text-stone-500 font-serif">
                         ${s.icon}
                     </div>
                     <div class="flex w-full md:w-1/2 pl-20 md:pl-0 ${rowClass}">
                         <div class="w-full md:px-12">
-                            <div class="${extraClass} border-l-4 ${s.color} rounded-lg shadow-sm p-4 card-hover">
-                                <div class="flex flex-col ${alignClass} mb-2 border-b border-slate-100 pb-2">
-                                    <span class="font-bold text-lg text-slate-800 font-mono">${item.start} - ${item.end}</span>
-                                    <div class="flex items-center ${isLeft ? 'justify-end' : 'justify-start'} mt-1">
-                                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${item.loc}</span>
+                            <div class="glass-card rounded-2xl p-6 ${extraClass}">
+                                <div class="flex flex-col ${alignClass} mb-3 border-b border-stone-100 pb-2">
+                                    <span class="font-bold text-lg text-stone-700 font-serif italic">${item.start} - ${item.end}</span>
+                                    <div class="flex items-center ${isLeft ? 'justify-end' : 'justify-start'} mt-1 gap-2">
+                                        <span class="text-[10px] font-bold text-stone-400 bg-stone-50 px-2 py-0.5 rounded border border-stone-100 font-sans tracking-wide">${item.loc}</span>
                                         ${tagHTML}
                                     </div>
                                 </div>
-                                <h3 class="text-lg font-bold text-slate-800 mb-2 ${alignClass}">
-                                    <a href="${getMapLink(item.link)}" target="_blank" class="hover:text-rose-600 underline decoration-slate-200 underline-offset-4">${item.title}</a>
+                                <h3 class="text-xl font-bold text-stone-800 mb-2 ${alignClass} font-serif">
+                                    <a href="${getMapLink(item.link)}" target="_blank" class="hover:text-rose-500 transition-colors flex items-center gap-2 ${isLeft ? 'justify-end' : 'justify-start'}">
+                                        ${item.title} 
+                                        <span class="text-xs opacity-40">↗</span>
+                                    </a>
                                 </h3>
-                                <p class="text-sm text-slate-700 font-medium mb-1">💡 ${item.action}</p>
-                                <p class="text-xs text-rose-600 font-bold">${item.rule}</p>
+                                <p class="text-sm text-stone-600 font-medium mb-2 font-sans leading-relaxed">💡 ${item.action}</p>
+                                <p class="text-xs text-rose-500 font-bold tracking-wide font-sans">${item.rule}</p>
                                 ${recHTML}
                             </div>
                         </div>
@@ -336,46 +387,49 @@
                 </div>`;
                 tlContainer.insertAdjacentHTML('beforeend', html);
             });
-            
             observeScroll();
         }
 
         function renderStatic() {
-            // Render Navigation Wall
             const grid = document.getElementById('food-grid');
             if(grid) {
                 grid.innerHTML = '';
                 spotsData.forEach(spot => {
                     const html = `
-                    <a href="${getMapLink(spot.link)}" target="_blank" class="block bg-white rounded-xl border border-slate-200 p-5 card-hover ${spot.bg}">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-xs font-bold text-slate-500 border border-slate-200 bg-white px-2 py-1 rounded">${spot.tag}</span>
-                            <span class="text-xs font-bold text-rose-600">${spot.time}</span>
+                    <a href="${getMapLink(spot.link)}" target="_blank" class="block glass-card rounded-2xl p-6 ${spot.bg} group">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-[10px] font-bold text-stone-400 border border-stone-100 bg-white px-2 py-1 rounded-full">${spot.tag}</span>
+                            <span class="text-xs font-bold text-rose-400 font-serif italic">${spot.time}</span>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-1">${spot.title}</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed">${spot.desc}</p>
+                        <h3 class="text-xl font-bold text-stone-800 mb-2 group-hover:text-rose-500 transition-colors font-serif">${spot.title}</h3>
+                        <p class="text-sm text-stone-500 leading-relaxed font-sans font-light">${spot.desc}</p>
                     </a>`;
                     grid.insertAdjacentHTML('beforeend', html);
                 });
             }
 
-            // Render Extras (Pocket List)
             const renderArea = (id, data, colorClass) => {
                 const el = document.getElementById(id);
                 if (!el) return;
                 el.innerHTML = ''; 
 
+                const colors = {
+                    'rose': 'text-rose-800 group-hover:text-rose-600',
+                    'orange': 'text-orange-800 group-hover:text-orange-600',
+                    'indigo': 'text-indigo-800 group-hover:text-indigo-600'
+                };
+
                 data.forEach(item => {
                     const html = `
-                    <a href="${getMapLink(item.name)}" target="_blank" class="pocket-card flex items-center justify-between text-${colorClass}-700 hover:text-${colorClass}-900 group">
-                        <div class="flex items-center gap-3">
-                            <span class="text-lg">${item.icon}</span>
+                    <a href="${getMapLink(item.name)}" target="_blank" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/50 transition group border border-transparent hover:border-white/60">
+                        <div class="flex items-center gap-4">
+                            <span class="text-xl opacity-70">${item.icon}</span>
                             <div class="flex flex-col">
-                                <span class="text-sm font-bold">${item.name}</span>
-                                <span class="text-[10px] text-slate-500 bg-white/50 px-1.5 rounded w-fit">${item.desc}</span>
+                                <span class="text-sm font-bold ${colors[colorClass]} transition-colors font-serif tracking-wide">${item.name}</span>
+                                <span class="text-[10px] text-stone-400 font-sans">${item.desc}</span>
                             </div>
                         </div>
-                        <span class="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold">GO ↗</span>
+                        <span class="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-stone-400">↗</span>
                     </a>`;
                     el.insertAdjacentHTML('beforeend', html);
                 });
@@ -398,7 +452,6 @@
             if(window.scrollY > 300) btn.classList.add('show'); else btn.classList.remove('show');
         });
 
-        // Main Entry Point
         window.addEventListener('DOMContentLoaded', () => {
             renderTimeline();
             renderStatic();
