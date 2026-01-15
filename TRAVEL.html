@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中山劍潭｜一日精準行程 (UI美化版)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fff1f2;
+            color: #334155;
+            background-image: linear-gradient(to bottom, #fff1f2 0%, #fff7ed 100%);
+            scroll-behavior: smooth;
+        }
+
+        /* Timeline Style */
+        .timeline-line {
+            position: absolute;
+            left: 28px;
+            top: 24px;
+            bottom: 24px;
+            width: 3px;
+            background: #cbd5e1;
+            z-index: 0;
+            border-radius: 99px;
+        }
+
+        @media (min-width: 768px) {
+            .timeline-line {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Interactions */
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.15); border-color: #fda4af; }
+
+        /* Tags */
+        .tag-base { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+        .tag-hard { background-color: #be123c; color: white; }
+        .tag-rec { background-color: #0ea5e9; color: white; }
+        .tag-rain { background-color: #64748b; color: white; }
+
+        /* Animation */
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Back to Top */
+        #back-to-top { opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        #back-to-top.show { opacity: 1; visibility: visible; }
+
+        /* Checklist Styles */
+        .checklist-group h3 { color: #881337; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .checklist-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; font-size: 0.9rem; color: #475569; cursor: pointer; }
+        .checklist-item input { accent-color: #f43f5e; width: 1rem; height: 1rem; }
+
+        /* Extra List Styling (Pocket List) */
+        .pocket-card { background: white; border-radius: 12px; padding: 12px; transition: all 0.2s; border: 1px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .pocket-card:hover { transform: scale(1.02); border-color: currentColor; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body class="antialiased selection:bg-rose-200 selection:text-rose-900 pb-20">
+
+    <nav class="bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-rose-100 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-14">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-8 h-8 bg-rose-500 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">P</div>
+                    <div>
+                        <h1 class="font-bold text-base text-slate-800 leading-none">中山劍潭精準行程</h1>
+                        <p class="text-[10px] text-slate-500 font-mono mt-0.5">VER 14.0 (UI Upgrade)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="weather-btn" onclick="toggleWeather()" class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 transition border border-amber-200">
+                        <span>☀️ 晴天模式</span>
+                    </button>
+                    <button onclick="copyItinerary()" class="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition border border-slate-200">
+                        <span>📋 複製</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="prep" class="py-6 max-w-5xl mx-auto px-4">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 reveal active">
+            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
+                <span class="text-rose-500">🎒</span> 出發前檢查清單
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="checklist-group bg-rose-50 p-4 rounded-xl border border-rose-100">
+                    <h3>🔴 絕對必備</h3>
+                    <label class="checklist-item"><input type="checkbox"> 現金 (百元鈔/拉麵店用)</label>
+                    <label class="checklist-item"><input type="checkbox"> 襪子 (貓咖規定)</label>
+                    <label class="checklist-item"><input type="checkbox"> 悠遊卡 (且有錢)</label>
+                    <label class="checklist-item"><input type="checkbox"> 行動電源 + 線</label>
+                </div>
+
+                <div class="checklist-group bg-sky-50 p-4 rounded-xl border border-sky-100">
+                    <h3>🔵 戶外機能</h3>
+                    <label class="checklist-item"><input type="checkbox"> 防滑好走的鞋</label>
+                    <label class="checklist-item"><input type="checkbox"> 摺疊傘 (雨備)</label>
+                    <label class="checklist-item"><input type="checkbox"> 薄外套 (山頂風大)</label>
+                </div>
+
+                <div class="checklist-group bg-amber-50 p-4 rounded-xl border border-amber-100">
+                    <h3>🟡 貼心加分</h3>
+                    <label class="checklist-item"><input type="checkbox"> 濕紙巾 (流汗用)</label>
+                    <label class="checklist-item"><input type="checkbox"> 面紙</label>
+                    <label class="checklist-item"><input type="checkbox"> 水 (出發前買好)</label>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="timeline" class="py-4 max-w-5xl mx-auto px-4">
+        <div class="flex items-center justify-between mb-8 px-2 reveal">
+            <h2 class="text-2xl font-bold text-slate-800">今日流程</h2>
+            <div class="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
+                日落 S = 17:28
+            </div>
+        </div>
+        <div class="timeline-container relative pb-8" id="timeline-content">
+            <div class="timeline-line"></div>
+            </div>
+    </section>
+
+    <section id="food" class="py-12 bg-white border-t border-rose-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">全地圖導航</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="food-grid">
+                </div>
+        </div>
+    </section>
+
+    <section id="extras" class="py-12 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-10 reveal">
+                <span class="text-xs font-bold text-slate-400 tracking-widest uppercase">POCKET LIST</span>
+                <h2 class="text-2xl font-bold text-slate-800 mt-1">空檔備案區</h2>
+                <p class="text-sm text-slate-500 mt-2">提早結束或需要吹冷氣時使用，點擊可直接導航</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div class="bg-gradient-to-br from-rose-50 to-pink-100 rounded-2xl p-6 shadow-sm border border-rose-200 reveal relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-9xl text-rose-200 opacity-20 select-none">🛍️</div>
+                    <h3 class="text-lg font-bold text-rose-600 mb-4 flex items-center gap-2 relative z-10">
+                        <span class="bg-white p-1 rounded-md shadow-sm">🚇</span> 中山站
+                    </h3>
+                    <div class="space-y-3 relative z-10" id="extra-zhongshan"></div>
+                </div>
+
+                <div class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-2xl p-6 shadow-sm border border-orange-200 reveal relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 text-9xl text-orange-200 opacity-20 select-none">🎨</div>
+                    <h3 class="text-lg font-bold text-orange-600 mb-4 flex items-center gap-2 relative z-10">
+                        <span class="bg-white p-1 rounded-md shadow-sm">🎡</span> 圓山站
+                    </h3>
+                    <div class="space-y-3 relative z-10" id="extra-yuanshan"></div>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-50 to-indigo-100 rounded-2xl p-6 shadow-sm border border-indigo-200 reveal relative overflow-hidden">
+                     <div class="absolute -right-4 -top-4 text-9xl text-indigo-200 opacity-20 select-none">🎭</div>
+                    <h3 class="text-lg font-bold text-indigo-600 mb-4 flex items-center gap-2 relative z-10">
+                        <span class="bg-white p-1 rounded-md shadow-sm">🌃</span> 劍潭/士林
+                    </h3>
+                    <div class="space-y-3 relative z-10" id="extra-jiantan"></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-800 text-slate-400 py-12 text-center">
+        <p class="text-xs font-bold tracking-widest uppercase mb-1">Trip Planner v14.0</p>
+        <p class="text-[10px] text-slate-600">Final Release with UI Enhancements</p>
+    </footer>
+
+    <button id="back-to-top" onclick="window.scrollTo(0,0)" class="fixed bottom-6 right-6 bg-rose-500 text-white p-3 rounded-full shadow-lg hover:bg-rose-600 transition z-50">↑</button>
+
+    <script>
+        let isRainMode = false;
+
+        // --- Data Definitions ---
+
+        const itineraryData = [
+            { start: "11:00", end: "11:10", title: "集合 & 整備", loc: "中山南西", type: "prep", action: "進百貨洗手間整理儀容、買水。", rule: "下午只做小補，勿空等。", link: "中山南西+百貨" },
+            { start: "11:10", end: "11:15", title: "前往平成十九", loc: "移動", type: "move", action: "直奔店門口排隊。", rule: "🔥 提早5分鐘，保證第一輪。", link: "平成十九" },
+            { start: "11:15", end: "12:20", title: "午餐：平成十九", loc: "中山", type: "food", action: "販賣機點餐 (備好百元鈔)。", rule: "12:20 結帳離場。", link: "平成十九" },
+            { start: "12:20", end: "13:05", title: "文藝漫步 (冷氣)", loc: "中山周邊", type: "relax", action: "推薦去誠品 R79 或光點台北。", rule: "善用空檔，保持涼爽。", link: "誠品R79", recs: [{name:"誠品R79", link:"誠品R79"}, {name:"光點台北", link:"光點台北"}] },
+            { start: "13:05", end: "13:25", title: "前往紅玥", loc: "移動", type: "move", action: "慢慢走到貓咖附近。", rule: "13:25 必到門口待命。", link: "紅玥緬因貓藝廊" },
+            { start: "13:30", end: "15:00", title: "紅玥緬因貓藝廊", loc: "中山", type: "hard", action: "穿襪子入場，盡情嚕貓。", rule: "硬時點，15:00 準時離場。", link: "紅玥緬因貓藝廊" },
+            { start: "15:00", end: "15:30", title: "移動至圓山", loc: "捷運", type: "move", action: "中山站→圓山站→冰山五角。", rule: "填補空檔，直接吃甜點。", link: "圓山站" },
+            { start: "15:30", end: "16:15", title: "冰山五角", loc: "圓山", type: "food", action: "悠閒享用甜點。", rule: "避開尖峰，為爬山儲能。", link: "冰山五角" },
+            
+            // --- 分歧點 (Sunny vs Rain) ---
+            { start: "16:15", end: "16:30", title: "移動至劍潭", loc: "捷運", type: "move", action: "圓山→劍潭→登山口。", rule: "16:30 抵達登山口。", link: "劍潭山親山步道登山口", mode: "sunny" },
+            { start: "16:30", end: "16:40", title: "起登整備", loc: "登山口", type: "prep", action: "綁頭髮、確認裝備。", rule: "提早起登，不趕路。", link: "劍潭山親山步道登山口", mode: "sunny" },
+            { start: "16:40", end: "17:00", title: "登山上行", loc: "劍潭山", type: "act", action: "穩步上行至微風平台。", rule: "目標：17:00 前抵達。", link: "微風平台", mode: "sunny" },
+            { start: "17:00", end: "17:45", title: "森林方舟 (夕陽)", loc: "觀景台", type: "hard", action: "捕捉 Golden Hour (17:00-17:30)。", rule: "完美覆蓋最美光線。", link: "森林方舟", special: "sunset", mode: "sunny" },
+            
+            // 雨天備案
+            { start: "16:15", end: "17:30", title: "台北美術館", loc: "圓山", type: "relax", action: "躲雨、吹冷氣、看展。", rule: "雨天不去劍潭山。", link: "台北美術館", mode: "rain" },
+            { start: "17:30", end: "17:45", title: "移動至劍潭", loc: "捷運", type: "move", action: "圓山→劍潭，準備晚餐。", rule: "慢慢移動即可。", link: "劍潭站", mode: "rain" },
+
+            // 晚餐 (Common)
+            { start: "17:45", end: "END", title: "晚餐：長生塩人", loc: "劍潭", type: "food", action: "登記候位 (只收現金)。", rule: "若等太久：去士林夜市買雞排墊胃。", link: "長生塩人劍潭" }
+        ];
+
+        const spotsData = [
+            { title: "誠品 R79", tag: "逛街", time: "12:20", desc: "地下書街，冷氣開放。", link: "誠品R79", bg: "bg-sky-50" },
+            { title: "光點台北", tag: "逛街", time: "12:20", desc: "白色洋房，庭園好拍。", link: "光點台北", bg: "bg-sky-50" },
+            { title: "平成十九", tag: "午餐", time: "11:15", desc: "提早5分鐘避排隊。", link: "平成十九", bg: "bg-orange-50" },
+            { title: "紅玥貓藝廊", tag: "貓咖", time: "13:30", desc: "硬時點，準時入場。", link: "紅玥緬因貓藝廊", bg: "bg-rose-50" },
+            { title: "冰山五角", tag: "甜點", time: "15:30", desc: "提早吃，填補空檔。", link: "冰山五角", bg: "bg-pink-50" },
+            { title: "森林方舟", tag: "夕陽", time: "17:00", desc: "提早到，抓黃金光線。", link: "森林方舟", bg: "bg-indigo-50" }
+        ];
+
+        const extrasData = {
+            zhongshan: [
+                {name:"誠品 R79", desc:"書香冷氣", icon: "📚"}, 
+                {name:"光點台北", desc:"美照洋房", icon: "📷"}, 
+                {name:"赤峰街", desc:"文創小店", icon: "☕"}, 
+                {name:"新光三越", desc:"補給機能", icon: "🛍️"}
+            ],
+            yuanshan: [
+                {name:"MAJI 集食行樂", desc:"異國市集", icon: "🍺"}, 
+                {name:"北美館", desc:"躲雨看展", icon: "🖼️"}, 
+                {name:"花博公園", desc:"草地散步", icon: "🌳"}
+            ],
+            jiantan: [
+                {name:"北藝中心", desc:"球劇場建築", icon: "🎭"}, 
+                {name:"士林夜市", desc:"晚餐後逛", icon: "🍗"}, 
+                {name:"劍潭公園", desc:"登山口旁", icon: "⛲"}
+            ]
+        };
+
+        // --- Functions ---
+
+        function getMapLink(query) {
+             return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+        }
+
+        function toggleWeather() {
+            isRainMode = !isRainMode;
+            const btn = document.getElementById('weather-btn');
+            
+            if (isRainMode) {
+                btn.innerHTML = '<span>🌧️ 雨天模式</span>';
+                btn.className = "flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-600 text-white hover:bg-slate-700 transition border border-slate-600";
+            } else {
+                btn.innerHTML = '<span>☀️ 晴天模式</span>';
+                btn.className = "flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 transition border border-amber-200";
+            }
+            renderTimeline();
+        }
+
+        function copyItinerary() {
+            let text = "📅 中山劍潭一日遊 (精準版)\n\n";
+            itineraryData.forEach(item => {
+                if (item.mode === 'rain' && !isRainMode) return;
+                if (item.mode === 'sunny' && isRainMode) return;
+                text += `${item.start} ${item.title}\n📍 ${item.loc} | 💡 ${item.action}\n\n`;
+            });
+            text += "Trip Planner v14.0";
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert("✅ 行程已複製！請直接貼上 Line 或筆記本。");
+            });
+        }
+
+        function renderTimeline() {
+            const tlContainer = document.getElementById('timeline-content');
+            tlContainer.innerHTML = '<div class="timeline-line"></div>';
+
+            itineraryData.forEach((item, index) => {
+                if (item.mode === 'rain' && !isRainMode) return;
+                if (item.mode === 'sunny' && isRainMode) return;
+
+                let s = { icon: '📍', color: 'border-slate-300' };
+                if (item.type === 'food') s = { icon: '🥢', color: 'border-orange-400' };
+                if (item.type === 'prep') s = { icon: '🎒', color: 'border-pink-300' };
+                if (item.type === 'hard') s = { icon: '⭐', color: 'border-rose-500' };
+                if (item.type === 'relax') s = { icon: '☕', color: 'border-sky-400' };
+                
+                let tagHTML = '';
+                if(item.type === 'hard') tagHTML = '<span class="tag-base tag-hard ml-2">不可動</span>';
+                if(item.type === 'relax') tagHTML = '<span class="tag-base tag-rec ml-2">推薦</span>';
+                if(item.mode === 'rain') tagHTML = '<span class="tag-base tag-rain ml-2">雨備</span>';
+
+                let recHTML = '';
+                if(item.recs) {
+                    recHTML = `<div class="mt-3 flex flex-wrap gap-2">
+                        ${item.recs.map(r => `<a href="${getMapLink(r.link)}" target="_blank" class="rec-btn">📍 ${r.name}</a>`).join('')}
+                    </div>`;
+                }
+
+                const extraClass = item.special === 'sunset' ? 'bg-gradient-to-r from-orange-50 to-rose-50 border-l-orange-400' : 'bg-white';
+                const isLeft = index % 2 === 0;
+                const rowClass = isLeft ? 'md:flex-row-reverse' : 'md:flex-row';
+                const alignClass = isLeft ? 'md:text-right' : 'md:text-left';
+
+                const html = `
+                <div class="relative flex items-stretch justify-between md:justify-center mb-8 w-full group reveal">
+                    <div class="absolute left-[28px] md:left-1/2 w-10 h-10 rounded-full bg-white border-[3px] ${s.color} z-10 transform -translate-x-1/2 flex items-center justify-center text-lg shadow-sm">
+                        ${s.icon}
+                    </div>
+                    <div class="flex w-full md:w-1/2 pl-20 md:pl-0 ${rowClass}">
+                        <div class="w-full md:px-12">
+                            <div class="${extraClass} border-l-4 ${s.color} rounded-lg shadow-sm p-4 card-hover">
+                                <div class="flex flex-col ${alignClass} mb-2 border-b border-slate-100 pb-2">
+                                    <span class="font-bold text-lg text-slate-800 font-mono">${item.start} - ${item.end}</span>
+                                    <div class="flex items-center ${isLeft ? 'justify-end' : 'justify-start'} mt-1">
+                                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${item.loc}</span>
+                                        ${tagHTML}
+                                    </div>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-2 ${alignClass}">
+                                    <a href="${getMapLink(item.link)}" target="_blank" class="hover:text-rose-600 underline decoration-slate-200 underline-offset-4">${item.title}</a>
+                                </h3>
+                                <p class="text-sm text-slate-700 font-medium mb-1">💡 ${item.action}</p>
+                                <p class="text-xs text-rose-600 font-bold">${item.rule}</p>
+                                ${recHTML}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                tlContainer.insertAdjacentHTML('beforeend', html);
+            });
+            
+            observeScroll();
+        }
+
+        function renderStatic() {
+            // Render Navigation Wall
+            const grid = document.getElementById('food-grid');
+            if(grid) {
+                grid.innerHTML = '';
+                spotsData.forEach(spot => {
+                    const html = `
+                    <a href="${getMapLink(spot.link)}" target="_blank" class="block bg-white rounded-xl border border-slate-200 p-5 card-hover ${spot.bg}">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-slate-500 border border-slate-200 bg-white px-2 py-1 rounded">${spot.tag}</span>
+                            <span class="text-xs font-bold text-rose-600">${spot.time}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">${spot.title}</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">${spot.desc}</p>
+                    </a>`;
+                    grid.insertAdjacentHTML('beforeend', html);
+                });
+            }
+
+            // Render Extras (Pocket List)
+            const renderArea = (id, data, colorClass) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = ''; 
+
+                data.forEach(item => {
+                    const html = `
+                    <a href="${getMapLink(item.name)}" target="_blank" class="pocket-card flex items-center justify-between text-${colorClass}-700 hover:text-${colorClass}-900 group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-lg">${item.icon}</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold">${item.name}</span>
+                                <span class="text-[10px] text-slate-500 bg-white/50 px-1.5 rounded w-fit">${item.desc}</span>
+                            </div>
+                        </div>
+                        <span class="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold">GO ↗</span>
+                    </a>`;
+                    el.insertAdjacentHTML('beforeend', html);
+                });
+            };
+
+            renderArea('extra-zhongshan', extrasData.zhongshan, 'rose');
+            renderArea('extra-yuanshan', extrasData.yuanshan, 'orange');
+            renderArea('extra-jiantan', extrasData.jiantan, 'indigo');
+        }
+
+        function observeScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('back-to-top');
+            if(window.scrollY > 300) btn.classList.add('show'); else btn.classList.remove('show');
+        });
+
+        // Main Entry Point
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTimeline();
+            renderStatic();
+        });
+
+    </script>
+</body>
+</html>
